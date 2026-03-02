@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villa Haven · Booking Manager</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6ecf4 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-card {
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 100px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: flex;
+            gap: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .stat-dot.villa1 { background: #3b82f6; }
+        .stat-dot.villa2 { background: #8b5cf6; }
+        .stat-dot.villa3 { background: #ec4899; }
+
+        .stat-label {
+            font-weight: 500;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .stat-number {
+            font-weight: 600;
+            color: #1e293b;
+            background: #f1f5f9;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 1.5rem;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.8);
+            height: fit-content;
+            position: sticky;
+            top: 1.5rem;
+        }
+
+        .booking-card h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .booking-card h2 svg {
+            width: 20px;
+            height: 20px;
+            color: #3b82f6;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            color: #475569;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .date-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 8px 15px -5px rgba(37,99,235,0.3);
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -5px rgba(37,99,235,0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #94a3b8;
+            box-shadow: none;
+        }
+
+        .conflict-warning {
+            background: #fef2f2;
+            border: 2px solid #fee2e2;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            margin: 1rem 0 0;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            color: #991b1b;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .conflict-warning.show {
+            display: flex;
+        }
+
+        .message {
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .message.show {
+            display: flex;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 2px solid #fee2e2;
+            color: #991b1b;
+        }
+
+        .success-message {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .views-container {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .view-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 1rem;
+        }
+
+        .view-tab {
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+            border: none;
+            color: #64748b;
+        }
+
+        .view-tab.active {
+            background: #1e293b;
+            color: white;
+        }
+
+        /* ===== FIXED CALENDAR STYLES ===== */
+        .calendar-view {
+            overflow-x: auto;
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .calendar-table th {
+            background: #f8fafc;
+            padding: 1rem 0.5rem;
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.9rem;
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .calendar-table td {
+            border: 1px solid #e2e8f0;
+            vertical-align: top;
+            padding: 0;
+        }
+
+        .villa-cell {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+            text-align: center;
+            width: 100px;
+            border-right: 2px solid #e2e8f0 !important;
+        }
+
+        .date-header {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 500;
+            padding: 0.5rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .bookings-container {
+            min-height: 100px;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .calendar-booking {
+            background: #3b82f6;
+            color: white;
+            padding: 0.3rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .calendar-booking.villa1 { background: #3b82f6; }
+        .calendar-booking.villa2 { background: #8b5cf6; }
+        .calendar-booking.villa3 { background: #ec4899; }
+
+        .calendar-booking:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .booking-start {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            position: relative;
+        }
+
+        .booking-end {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .booking-indicator {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            margin: 0 2px;
+        }
+
+        /* Timeline view */
+        .timeline-view {
+            overflow-x: auto;
+        }
+
+        .timeline-container {
+            min-width: 600px;
+        }
+
+        .timeline-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .timeline-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .timeline-villa {
+            width: 100px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+
+        .timeline-bars {
+            flex: 1;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .timeline-bar {
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .timeline-bar.villa2 { background: #8b5cf6; }
+        .timeline-bar.villa3 { background: #ec4899; }
+
+        .date-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: 0.25rem;
+            padding: 0 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e2e8f0;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .booking-card {
+                position: static;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>Kananke <span> villa </span> · Manager</h1>
+            <div class="stats-card">
+                <div class="stat-item">
+                    <span class="stat-dot villa1"></span>
+                    <span class="stat-label"> Jasmin </span>
+                    <span class="stat-number" id="villa1-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-dot villa2"></span>
+                    <span class="stat-label"> Orchid </span>
+                    <span class="stat-number" id="villa2-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-dot villa3"></span>
+                    <span class="stat-label"> Rose </span>
+                    <span class="stat-number" id="villa3-count">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="error-message" class="message error-message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span id="error-text"></span>
+        </div>
+
+        <div id="success-message" class="message success-message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 6L9 17L4 12"></path>
+            </svg>
+            <span id="success-text"></span>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="booking-card">
+                <h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    New Booking
+                </h2>
+                <div class="subtitle">Add a reservation for any villa</div>
+
+                <div class="form-group">
+                    <label>Guest name</label>
+                    <input type="text" id="name" placeholder="e.g., John Smith" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label>Select villa</label>
+                    <select id="villa">
+                        <option value="Villa 1"> Jasmin </option>
+                        <option value="Villa 2"> Orchid </option>
+                        <option value="Villa 3"> Rose </option>
+                    </select>
+                </div>
+
+                <div class="date-grid">
+                    <div class="form-group">
+                        <label>Check-in</label>
+                        <input type="date" id="start">
+                    </div>
+                    <div class="form-group">
+                        <label>Check-out</label>
+                        <input type="date" id="end">
+                    </div>
+                </div>
+
+                <div id="conflict-warning" class="conflict-warning">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span>This villa is already booked for these dates</span>
+                </div>
+
+                <button class="btn-primary" id="add-btn">➕ Add booking</button>
+            </div>
+
+            <div class="views-container">
+                <div class="view-tabs">
+                    <button class="view-tab active" data-view="calendar">📅 Calendar</button>
+                    <button class="view-tab" data-view="timeline">📊 Timeline</button>
+                </div>
+
+                <div id="calendar-view" class="calendar-view">
+                    <table class="calendar-table" id="calendar-table">
+                        <!-- Calendar will be rendered here by JavaScript -->
+                    </table>
+                </div>
+
+                <div id="timeline-view" class="timeline-view" style="display: none;">
+                    <div class="timeline-container" id="timeline-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const supabaseClient = window.supabase.createClient(
+            "https://ttspzbtmblvxqinnrpzm.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0c3B6YnRtYmx2eHFpbm5ycHptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNjI1MDgsImV4cCI6MjA4NzgzODUwOH0.L0OIJDXBKEHSWoZqVOUWGZh1XGStb5MfqWB3L_nM8pE"
+        );
+
+        // State
+        let allBookings = [];
+        let currentView = 'calendar';
+
+        // DOM Elements
+        const nameInput = document.getElementById('name');
+        const villaSelect = document.getElementById('villa');
+        const startInput = document.getElementById('start');
+        const endInput = document.getElementById('end');
+        const addBtn = document.getElementById('add-btn');
+        const conflictWarning = document.getElementById('conflict-warning');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const successMessage = document.getElementById('success-message');
+        const successText = document.getElementById('success-text');
+        const calendarView = document.getElementById('calendar-view');
+        const timelineView = document.getElementById('timeline-view');
+        const calendarTable = document.getElementById('calendar-table');
+        const timelineGrid = document.getElementById('timeline-grid');
+
+        // Set default dates
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        startInput.value = today.toISOString().split('T')[0];
+        endInput.value = tomorrow.toISOString().split('T')[0];
+
+        // Helper functions
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => errorMessage.classList.remove('show'), 4000);
+        }
+
+        function showSuccess(message) {
+            successText.textContent = message;
+            successMessage.classList.add('show');
+            setTimeout(() => successMessage.classList.remove('show'), 3000);
+        }
+
+        // Check for conflicts
+        function checkConflicts() {
+            const villa = villaSelect.value;
+            const start = startInput.value;
+            const end = endInput.value;
+            
+            if (!start || !end || !villa) return false;
+
+            const conflict = allBookings.some(booking => {
+                if (booking.villa !== villa) return false;
+                
+                const bookingStart = new Date(booking.start_date);
+                const bookingEnd = new Date(booking.end_date);
+                const checkStart = new Date(start);
+                const checkEnd = new Date(end);
+                
+                return (checkStart < bookingEnd && checkEnd > bookingStart);
+            });
+
+            if (conflict) {
+                conflictWarning.classList.add('show');
+                addBtn.disabled = true;
+            } else {
+                conflictWarning.classList.remove('show');
+                addBtn.disabled = false;
+            }
+            
+            return conflict;
+        }
+
+        // Load bookings
+        async function loadBookings() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from("bookings")
+                    .select("*")
+                    .order("start_date", { ascending: true });
+
+                if (error) {
+                    showError('Failed to load bookings: ' + error.message);
+                    return;
+                }
+
+                allBookings = data || [];
+                updateStats();
+                renderCurrentView();
+                checkConflicts();
+                
+            } catch (err) {
+                showError('Failed to connect to database');
+            }
+        }
+
+        // Update stats
+        function updateStats() {
+            const villa1 = allBookings.filter(b => b.villa === 'Villa 1').length;
+            const villa2 = allBookings.filter(b => b.villa === 'Villa 2').length;
+            const villa3 = allBookings.filter(b => b.villa === 'Villa 3').length;
+            
+            document.getElementById('villa1-count').textContent = villa1;
+            document.getElementById('villa2-count').textContent = villa2;
+            document.getElementById('villa3-count').textContent = villa3;
+        }
+
+        // Add booking
+        async function addBooking() {
+            try {
+                const name = nameInput.value.trim();
+                const villa = villaSelect.value;
+                const start = startInput.value;
+                const end = endInput.value;
+
+                if (!name) {
+                    showError('Please enter guest name');
+                    return;
+                }
+
+                if (!start || !end) {
+                    showError('Please select dates');
+                    return;
+                }
+
+                const startDate = new Date(start);
+                const endDate = new Date(end);
+                
+                if (endDate <= startDate) {
+                    showError('Check-out must be after check-in');
+                    return;
+                }
+
+                if (checkConflicts()) {
+                    showError('Cannot add: Villa is already booked for these dates');
+                    return;
+                }
+
+                const { error } = await supabaseClient
+                    .from("bookings")
+                    .insert([{
+                        guest_name: name,
+                        villa: villa,
+                        start_date: start,
+                        end_date: end
+                    }]);
+
+                if (error) {
+                    showError('Failed to add booking: ' + error.message);
+                    return;
+                }
+
+                showSuccess('Booking added successfully!');
+
+                nameInput.value = '';
+                
+                const newToday = new Date();
+                const newTomorrow = new Date(newToday);
+                newTomorrow.setDate(newTomorrow.getDate() + 1);
+                startInput.value = newToday.toISOString().split('T')[0];
+                endInput.value = newTomorrow.toISOString().split('T')[0];
+                
+                await loadBookings();
+                
+            } catch (err) {
+                showError('An unexpected error occurred');
+            }
+        }
+
+        // Delete booking
+        async function deleteBooking(id) {
+            if (!confirm('Delete this booking?')) return;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from("bookings")
+                    .delete()
+                    .eq("id", id);
+
+                if (error) {
+                    showError('Failed to delete booking');
+                    return;
+                }
+
+                showSuccess('Booking deleted');
+                await loadBookings();
+                
+            } catch (err) {
+                showError('Failed to delete booking');
+            }
+        }
+
+        // ===== FIXED CALENDAR RENDER =====
+        function renderCalendar() {
+            // Get next 14 days
+            const dates = [];
+            const today = new Date();
+            for (let i = 0; i < 14; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                dates.push(date);
+            }
+
+            // Villa list
+            const villas = ['Villa 1', 'Villa 2', 'Villa 3'];
+            const villaColors = ['villa1', 'villa2', 'villa3'];
+
+            // Start building the table
+            let html = '<thead><tr><th>Villa</th>';
+
+            // Add date headers
+            dates.forEach(date => {
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const dayNum = date.getDate();
+                const month = date.toLocaleDateString('en-US', { month: 'short' });
+                html += `<th>${dayName}<br><span style="font-weight:400; font-size:0.8rem;">${month} ${dayNum}</span></th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            // Add rows for each villa
+            villas.forEach((villa, villaIndex) => {
+                html += '<tr>';
+                html += `<td class="villa-cell">${villa}</td>`;
+
+                // Add cells for each date
+                dates.forEach(date => {
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    // Find bookings for this villa on this date
+                    const dayBookings = allBookings.filter(b => 
+                        b.villa === villa && 
+                        dateStr >= b.start_date && 
+                        dateStr <= b.end_date
+                    );
+
+                    html += '<td>';
+                    html += '<div class="bookings-container">';
+
+                    if (dayBookings.length > 0) {
+                        dayBookings.forEach(booking => {
+                            const isStart = dateStr === booking.start_date;
+                            const isEnd = dateStr === booking.end_date;
+                            
+                            let classes = `calendar-booking ${villaColors[villaIndex]}`;
+                            if (isStart) classes += ' booking-start';
+                            if (isEnd) classes += ' booking-end';
+                            
+                            html += `<div class="${classes}" onclick="window.deleteBooking(${booking.id})" title="Click to delete">`;
+                            
+                            // Add indicators for start/end/middle
+                            if (isStart && !isEnd) html += '📌 ';
+                            else if (!isStart && !isEnd) html += '📅 ';
+                            else if (isEnd) html += '🏁 ';
+                            
+                            html += booking.guest_name;
+                            html += '</div>';
+                        });
+                    } else {
+                        html += '<div style="height: 24px;"></div>'; // Empty state placeholder
+                    }
+
+                    html += '</div>';
+                    html += '</td>';
+                });
+
+                html += '</tr>';
+            });
+
+            html += '</tbody>';
+            calendarTable.innerHTML = html;
+        }
+
+        // Render timeline (unchanged)
+        function renderTimeline() {
+            if (allBookings.length === 0) {
+                timelineGrid.innerHTML = '<div class="empty-state">✨ No bookings yet — add your first reservation</div>';
+                return;
+            }
+
+            const villas = ['Villa 1', 'Villa 2', 'Villa 3'];
+            let html = '<div class="timeline-header"><div style="width:100px"></div><div>Upcoming stays</div></div>';
+
+            villas.forEach(villa => {
+                const villaBookings = allBookings
+                    .filter(b => b.villa === villa)
+                    .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+                if (villaBookings.length === 0) return;
+
+                html += '<div class="timeline-row">';
+                html += `<div class="timeline-villa">${villa}</div>`;
+                html += '<div class="timeline-bars">';
+
+                villaBookings.forEach(booking => {
+                    const start = new Date(booking.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                    const end = new Date(booking.end_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                    
+                    let villaClass = '';
+                    if (villa === 'Villa 2') villaClass = 'villa2';
+                    if (villa === 'Villa 3') villaClass = 'villa3';
+                    
+                    html += `<div class="timeline-bar ${villaClass}">`;
+                    html += `<span class="date-badge">${start} → ${end}</span>`;
+                    html += booking.guest_name;
+                    html += `<button class="delete-btn" onclick="window.deleteBooking(${booking.id})" title="Delete booking">✕</button>`;
+                    html += '</div>';
+                });
+
+                html += '</div></div>';
+            });
+
+            timelineGrid.innerHTML = html;
+        }
+
+        // Render current view
+        function renderCurrentView() {
+            if (currentView === 'calendar') {
+                renderCalendar();
+            } else {
+                renderTimeline();
+            }
+        }
+
+        // Switch view
+        function switchView(view) {
+            currentView = view;
+            
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-view="${view}"]`).classList.add('active');
+            
+            calendarView.style.display = view === 'calendar' ? 'block' : 'none';
+            timelineView.style.display = view === 'timeline' ? 'block' : 'none';
+            
+            renderCurrentView();
+        }
+
+        // Event listeners
+        addBtn.addEventListener('click', addBooking);
+        
+        villaSelect.addEventListener('change', checkConflicts);
+        startInput.addEventListener('change', checkConflicts);
+        endInput.addEventListener('change', checkConflicts);
+        
+        document.querySelectorAll('.view-tab').forEach(tab => {
+            tab.addEventListener('click', () => switchView(tab.dataset.view));
+        });
+
+        // Make functions available globally
+        window.deleteBooking = deleteBooking;
+        window.addBooking = addBooking;
+
+        // Initialize
+        loadBookings();
+    </script>
+</body>
+</html>
