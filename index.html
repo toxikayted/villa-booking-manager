@@ -421,7 +421,7 @@
             border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
-        /* ===== FIXED CALENDAR WITH VERTICALLY CENTERED VILLA NAMES ===== */
+        /* ===== FIXED CALENDAR WITH CENTERED EVERYTHING ===== */
         .calendar-view {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -453,26 +453,25 @@
             padding: 0;
         }
 
-        /* Fixed villa cell with vertical centering */
+        /* Villa cell with perfect vertical centering */
         .villa-cell {
             background: rgba(255, 255, 255, 0.03);
             font-weight: 600;
             color: white;
             text-align: center;
-            vertical-align: middle !important; /* Force vertical middle */
+            vertical-align: middle !important;
             width: 100px;
-            height: 100%; /* Take full height */
+            height: 100%;
             padding: 0;
             border-right: 2px solid rgba(255, 255, 255, 0.1) !important;
         }
 
-        /* Container for villa name to ensure proper centering */
         .villa-cell-content {
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100%;
-            min-height: 80px; /* Match bookings container min-height */
+            min-height: 100px; /* Increased to match centered bookings */
             width: 100%;
             padding: 0.5rem;
         }
@@ -483,19 +482,24 @@
             line-height: 1.4;
         }
 
+        /* Bookings container with centered content */
         .bookings-container {
-            min-height: 80px;
-            padding: 0.35rem;
+            min-height: 100px; /* Increased for better centering */
+            padding: 0.5rem;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            align-items: center; /* Center horizontally */
+            justify-content: center; /* Center vertically */
+            gap: 0.3rem;
+            width: 100%;
         }
 
+        /* Individual booking pills */
         .calendar-booking {
             color: white;
-            padding: 0.25rem 0.35rem;
-            border-radius: 6px;
-            font-size: 0.65rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
@@ -504,7 +508,9 @@
             text-overflow: ellipsis;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: left;
+            text-align: center;
+            width: 100%; /* Take full width of container */
+            max-width: 100%;
         }
 
         .calendar-booking.villa1 { background: linear-gradient(135deg, #3b82f6, #2563eb); }
@@ -817,6 +823,14 @@
             
             .modal-content {
                 padding: 1.5rem;
+            }
+
+            .villa-cell-content {
+                min-height: 90px;
+            }
+
+            .bookings-container {
+                min-height: 90px;
             }
         }
 
@@ -1223,7 +1237,7 @@
             }
         }
 
-        // Render calendar with fixed vertical centering
+        // Render calendar with centered everything
         function renderCalendar() {
             const dates = [];
             const today = new Date();
@@ -1254,7 +1268,7 @@
             villas.forEach((villa, villaIndex) => {
                 html += '<tr>';
                 
-                // Fixed villa cell with vertical centering
+                // Villa cell with perfect centering
                 html += `<td class="villa-cell"><div class="villa-cell-content"><span class="villa-name">${villa.icon} ${villa.display}</span></div></td>`;
 
                 dates.forEach(date => {
@@ -1279,7 +1293,8 @@
                             html += '</div>';
                         });
                     } else {
-                        html += '<div style="height: 22px;"></div>';
+                        // Empty state - add a non-breaking space to maintain height
+                        html += '<div style="height: 24px; width: 100%;"></div>';
                     }
 
                     html += '</div>';
