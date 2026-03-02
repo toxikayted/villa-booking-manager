@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Villa Haven · Booking Manager</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
         body {
             background: linear-gradient(135deg, #f0f4f8 0%, #e6ecf4 100%);
             min-height: 100vh;
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
         .app-container {
@@ -25,21 +25,35 @@
             margin: 0 auto;
         }
 
+        /* ===== MOBILE-FIRST HEADER ===== */
         .header {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
         }
 
+        @media (min-width: 640px) {
+            .header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
         .header h1 {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: 600;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        @media (min-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
         }
 
         .header h1 span {
@@ -48,14 +62,24 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* ===== MOBILE-FRIENDLY STATS ===== */
         .stats-card {
             background: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 100px;
+            padding: 0.75rem 1rem;
+            border-radius: 40px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             display: flex;
-            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 0.5rem;
             border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        @media (min-width: 640px) {
+            .stats-card {
+                padding: 0.75rem 1.5rem;
+                flex-wrap: nowrap;
+            }
         }
 
         .stat-item {
@@ -77,7 +101,13 @@
         .stat-label {
             font-weight: 500;
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+        }
+
+        @media (min-width: 768px) {
+            .stat-label {
+                font-size: 0.9rem;
+            }
         }
 
         .stat-number {
@@ -86,24 +116,38 @@
             background: #f1f5f9;
             padding: 0.15rem 0.5rem;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
+        /* ===== MOBILE-FIRST GRID ===== */
         .dashboard-grid {
-            display: grid;
-            grid-template-columns: 380px 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 1.5rem;
         }
 
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: 380px 1fr;
+            }
+        }
+
+        /* ===== MOBILE-FRIENDLY FORM CARD ===== */
         .booking-card {
             background: white;
             border-radius: 24px;
             padding: 1.5rem;
             box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,0.8);
-            height: fit-content;
-            position: sticky;
-            top: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .booking-card {
+                position: sticky;
+                top: 1.5rem;
+                height: fit-content;
+            }
         }
 
         .booking-card h2 {
@@ -149,9 +193,16 @@
             padding: 0.8rem 1rem;
             border: 2px solid #e2e8f0;
             border-radius: 14px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             transition: all 0.2s;
             background: #f8fafc;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* Better touch targets for mobile */
+        .form-group input, .form-group select, .btn-primary, .view-tab {
+            min-height: 48px;
         }
 
         .form-group input:focus, .form-group select:focus {
@@ -174,7 +225,7 @@
             padding: 0.9rem 1.5rem;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 1rem;
             cursor: pointer;
             width: 100%;
             transition: all 0.2s;
@@ -238,12 +289,14 @@
             color: #166534;
         }
 
+        /* ===== VIEWS CONTAINER ===== */
         .views-container {
             background: rgba(255,255,255,0.7);
             backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 1.5rem;
             border: 1px solid rgba(255,255,255,0.8);
+            overflow: hidden;
         }
 
         .view-tabs {
@@ -252,6 +305,8 @@
             margin-bottom: 1.5rem;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 1rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .view-tab {
@@ -264,6 +319,7 @@
             background: transparent;
             border: none;
             color: #64748b;
+            white-space: nowrap;
         }
 
         .view-tab.active {
@@ -271,15 +327,18 @@
             color: white;
         }
 
-        /* ===== FIXED CALENDAR STYLES ===== */
+        /* ===== MOBILE-FRIENDLY CALENDAR ===== */
         .calendar-view {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -0.5rem;
+            padding: 0 0.5rem;
         }
 
         .calendar-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            min-width: 800px;
             background: white;
             border-radius: 16px;
             overflow: hidden;
@@ -288,10 +347,10 @@
 
         .calendar-table th {
             background: #f8fafc;
-            padding: 1rem 0.5rem;
+            padding: 0.75rem 0.25rem;
             font-weight: 600;
             color: #475569;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-align: center;
             border-bottom: 2px solid #e2e8f0;
         }
@@ -308,11 +367,25 @@
             color: #1e293b;
             text-align: center;
             width: 100px;
+            font-size: 0.85rem;
             border-right: 2px solid #e2e8f0 !important;
         }
 
+        .villa-name {
+            display: block;
+            font-size: 0.9rem;
+        }
+        
+        .villa-subname {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: #64748b;
+            margin-top: 0.2rem;
+        }
+
         .date-header {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #64748b;
             font-weight: 500;
             padding: 0.5rem;
@@ -321,26 +394,26 @@
         }
 
         .bookings-container {
-            min-height: 100px;
-            padding: 0.5rem;
+            min-height: 80px;
+            padding: 0.25rem;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.2rem;
         }
 
         .calendar-booking {
-            background: #3b82f6;
             color: white;
-            padding: 0.3rem 0.5rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
+            padding: 0.25rem 0.25rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            line-height: 1.3;
         }
 
         .calendar-booking.villa1 { background: #3b82f6; }
@@ -349,36 +422,16 @@
 
         .calendar-booking:hover {
             filter: brightness(1.1);
-            transform: translateY(-1px);
         }
 
-        .booking-start {
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-            position: relative;
-        }
-
-        .booking-end {
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
-
-        .booking-indicator {
-            display: inline-block;
-            width: 4px;
-            height: 4px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 50%;
-            margin: 0 2px;
-        }
-
-        /* Timeline view */
+        /* ===== MOBILE-FRIENDLY TIMELINE ===== */
         .timeline-view {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .timeline-container {
-            min-width: 600px;
+            min-width: 500px;
         }
 
         .timeline-header {
@@ -393,14 +446,22 @@
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
-            align-items: center;
+            align-items: flex-start;
         }
 
         .timeline-villa {
             width: 100px;
             font-weight: 600;
             color: #1e293b;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        
+        .timeline-villa small {
+            display: block;
+            font-weight: 400;
+            color: #64748b;
+            font-size: 0.7rem;
         }
 
         .timeline-bars {
@@ -413,13 +474,14 @@
         .timeline-bar {
             background: #3b82f6;
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 30px;
-            font-size: 0.85rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            flex-wrap: wrap;
         }
 
         .timeline-bar.villa2 { background: #8b5cf6; }
@@ -427,9 +489,10 @@
 
         .date-badge {
             background: rgba(255,255,255,0.2);
-            padding: 0.2rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            white-space: nowrap;
         }
 
         .delete-btn {
@@ -439,20 +502,21 @@
             cursor: pointer;
             font-size: 1rem;
             margin-left: 0.25rem;
-            padding: 0 0.25rem;
+            padding: 0.2rem 0.4rem;
             transition: all 0.2s;
+            border-radius: 50%;
         }
 
         .delete-btn:hover {
             color: white;
-            transform: scale(1.1);
+            background: rgba(0,0,0,0.1);
         }
 
         .empty-state {
             text-align: center;
-            padding: 3rem;
+            padding: 2rem;
             color: #94a3b8;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .loading {
@@ -469,15 +533,22 @@
             to { transform: rotate(360deg); }
         }
 
-        @media (max-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+        /* ===== TOUCH OPTIMIZATIONS ===== */
+        @media (max-width: 768px) {
+            .calendar-booking, .timeline-bar, .delete-btn, .view-tab {
+                cursor: default;
             }
-            .booking-card {
-                position: static;
+            
+            .calendar-booking:active, .timeline-bar:active, .btn-primary:active {
+                transform: scale(0.98);
             }
-            body {
-                padding: 1rem;
+            
+            .delete-btn:active {
+                background: rgba(0,0,0,0.2);
+            }
+            
+            input, select, button {
+                font-size: 16px !important; /* Prevents zoom on iOS */
             }
         }
     </style>
@@ -485,27 +556,29 @@
 
 <body>
     <div class="app-container">
+        <!-- Header with stats -->
         <div class="header">
-            <h1>Kananke <span> villa </span> · Manager</h1>
+            <h1>Villa <span>Haven</span></h1>
             <div class="stats-card">
                 <div class="stat-item">
                     <span class="stat-dot villa1"></span>
-                    <span class="stat-label"> Jasmin </span>
+                    <span class="stat-label">Jasmin</span>
                     <span class="stat-number" id="villa1-count">0</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-dot villa2"></span>
-                    <span class="stat-label"> Orchid </span>
+                    <span class="stat-label">Orchid</span>
                     <span class="stat-number" id="villa2-count">0</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-dot villa3"></span>
-                    <span class="stat-label"> Rose </span>
+                    <span class="stat-label">Rose</span>
                     <span class="stat-number" id="villa3-count">0</span>
                 </div>
             </div>
         </div>
 
+        <!-- Messages -->
         <div id="error-message" class="message error-message">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -522,7 +595,9 @@
             <span id="success-text"></span>
         </div>
 
+        <!-- Main dashboard -->
         <div class="dashboard-grid">
+            <!-- Booking form -->
             <div class="booking-card">
                 <h2>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -533,7 +608,7 @@
                     </svg>
                     New Booking
                 </h2>
-                <div class="subtitle">Add a reservation for any villa</div>
+                <div class="subtitle">Add a reservation</div>
 
                 <div class="form-group">
                     <label>Guest name</label>
@@ -543,9 +618,9 @@
                 <div class="form-group">
                     <label>Select villa</label>
                     <select id="villa">
-                        <option value="Villa 1"> Jasmin </option>
-                        <option value="Villa 2"> Orchid </option>
-                        <option value="Villa 3"> Rose </option>
+                        <option value="Villa 1 - Jasmin">🌸 Jasmin · Ocean View</option>
+                        <option value="Villa 2 - Orchid">🌺 Orchid · Garden Suite</option>
+                        <option value="Villa 3 - Rose">🌹 Rose · Pool House</option>
                     </select>
                 </div>
 
@@ -566,24 +641,27 @@
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    <span>This villa is already booked for these dates</span>
+                    <span>Already booked for these dates</span>
                 </div>
 
                 <button class="btn-primary" id="add-btn">➕ Add booking</button>
             </div>
 
+            <!-- Views -->
             <div class="views-container">
                 <div class="view-tabs">
                     <button class="view-tab active" data-view="calendar">📅 Calendar</button>
                     <button class="view-tab" data-view="timeline">📊 Timeline</button>
                 </div>
 
+                <!-- Calendar view -->
                 <div id="calendar-view" class="calendar-view">
                     <table class="calendar-table" id="calendar-table">
-                        <!-- Calendar will be rendered here by JavaScript -->
+                        <!-- Calendar rendered by JS -->
                     </table>
                 </div>
 
+                <!-- Timeline view -->
                 <div id="timeline-view" class="timeline-view" style="display: none;">
                     <div class="timeline-container" id="timeline-grid"></div>
                 </div>
@@ -694,9 +772,9 @@
 
         // Update stats
         function updateStats() {
-            const villa1 = allBookings.filter(b => b.villa === 'Villa 1').length;
-            const villa2 = allBookings.filter(b => b.villa === 'Villa 2').length;
-            const villa3 = allBookings.filter(b => b.villa === 'Villa 3').length;
+            const villa1 = allBookings.filter(b => b.villa === 'Villa 1 - Jasmin').length;
+            const villa2 = allBookings.filter(b => b.villa === 'Villa 2 - Orchid').length;
+            const villa3 = allBookings.filter(b => b.villa === 'Villa 3 - Rose').length;
             
             document.getElementById('villa1-count').textContent = villa1;
             document.getElementById('villa2-count').textContent = villa2;
@@ -788,9 +866,8 @@
             }
         }
 
-        // ===== FIXED CALENDAR RENDER =====
+        // Render calendar
         function renderCalendar() {
-            // Get next 14 days
             const dates = [];
             const today = new Date();
             for (let i = 0; i < 14; i++) {
@@ -799,34 +876,33 @@
                 dates.push(date);
             }
 
-            // Villa list
-            const villas = ['Villa 1', 'Villa 2', 'Villa 3'];
+            const villas = [
+                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸' },
+                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺' },
+                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹' }
+            ];
+            
             const villaColors = ['villa1', 'villa2', 'villa3'];
 
-            // Start building the table
             let html = '<thead><tr><th>Villa</th>';
 
-            // Add date headers
             dates.forEach(date => {
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
                 const dayNum = date.getDate();
                 const month = date.toLocaleDateString('en-US', { month: 'short' });
-                html += `<th>${dayName}<br><span style="font-weight:400; font-size:0.8rem;">${month} ${dayNum}</span></th>`;
+                html += `<th>${dayName}<br><span style="font-weight:400; font-size:0.7rem;">${month} ${dayNum}</span></th>`;
             });
             html += '</tr></thead><tbody>';
 
-            // Add rows for each villa
             villas.forEach((villa, villaIndex) => {
                 html += '<tr>';
-                html += `<td class="villa-cell">${villa}</td>`;
+                html += `<td class="villa-cell"><span class="villa-name">${villa.icon} ${villa.display}</span></td>`;
 
-                // Add cells for each date
                 dates.forEach(date => {
                     const dateStr = date.toISOString().split('T')[0];
                     
-                    // Find bookings for this villa on this date
                     const dayBookings = allBookings.filter(b => 
-                        b.villa === villa && 
+                        b.villa === villa.name && 
                         dateStr >= b.start_date && 
                         dateStr <= b.end_date
                     );
@@ -837,24 +913,14 @@
                     if (dayBookings.length > 0) {
                         dayBookings.forEach(booking => {
                             const isStart = dateStr === booking.start_date;
-                            const isEnd = dateStr === booking.end_date;
                             
-                            let classes = `calendar-booking ${villaColors[villaIndex]}`;
-                            if (isStart) classes += ' booking-start';
-                            if (isEnd) classes += ' booking-end';
-                            
-                            html += `<div class="${classes}" onclick="window.deleteBooking(${booking.id})" title="Click to delete">`;
-                            
-                            // Add indicators for start/end/middle
-                            if (isStart && !isEnd) html += '📌 ';
-                            else if (!isStart && !isEnd) html += '📅 ';
-                            else if (isEnd) html += '🏁 ';
-                            
+                            html += `<div class="calendar-booking ${villaColors[villaIndex]}" onclick="window.deleteBooking(${booking.id})" title="Click to delete">`;
+                            if (isStart) html += '📌 ';
                             html += booking.guest_name;
                             html += '</div>';
                         });
                     } else {
-                        html += '<div style="height: 24px;"></div>'; // Empty state placeholder
+                        html += '<div style="height: 20px;"></div>';
                     }
 
                     html += '</div>';
@@ -868,36 +934,37 @@
             calendarTable.innerHTML = html;
         }
 
-        // Render timeline (unchanged)
+        // Render timeline
         function renderTimeline() {
             if (allBookings.length === 0) {
                 timelineGrid.innerHTML = '<div class="empty-state">✨ No bookings yet — add your first reservation</div>';
                 return;
             }
 
-            const villas = ['Villa 1', 'Villa 2', 'Villa 3'];
+            const villas = [
+                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸', class: 'villa1' },
+                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺', class: 'villa2' },
+                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹', class: 'villa3' }
+            ];
+            
             let html = '<div class="timeline-header"><div style="width:100px"></div><div>Upcoming stays</div></div>';
 
             villas.forEach(villa => {
                 const villaBookings = allBookings
-                    .filter(b => b.villa === villa)
+                    .filter(b => b.villa === villa.name)
                     .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
 
                 if (villaBookings.length === 0) return;
 
                 html += '<div class="timeline-row">';
-                html += `<div class="timeline-villa">${villa}</div>`;
+                html += `<div class="timeline-villa">${villa.icon} ${villa.display}<small>${villa.name.split(' - ')[0]}</small></div>`;
                 html += '<div class="timeline-bars">';
 
                 villaBookings.forEach(booking => {
                     const start = new Date(booking.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
                     const end = new Date(booking.end_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
                     
-                    let villaClass = '';
-                    if (villa === 'Villa 2') villaClass = 'villa2';
-                    if (villa === 'Villa 3') villaClass = 'villa3';
-                    
-                    html += `<div class="timeline-bar ${villaClass}">`;
+                    html += `<div class="timeline-bar ${villa.class}">`;
                     html += `<span class="date-badge">${start} → ${end}</span>`;
                     html += booking.guest_name;
                     html += `<button class="delete-btn" onclick="window.deleteBooking(${booking.id})" title="Delete booking">✕</button>`;
