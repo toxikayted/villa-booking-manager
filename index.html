@@ -7,7 +7,6 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet">
     <style>
-        /* Reset all margins and padding to eliminate white borders */
         * {
             margin: 0;
             padding: 0;
@@ -15,27 +14,23 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* Fix for iPhone white borders and scrolling hue */
         html {
-            background: #0b1120; /* Match body background */
+            background: #0b1120;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background: linear-gradient(135deg, #0b1120 0%, #192132 100%);
             min-height: 100vh;
-            min-height: -webkit-fill-available; /* Fix for iOS viewport height */
+            min-height: -webkit-fill-available;
             padding: 1rem;
             position: relative;
             margin: 0;
-            /* Prevent white overscroll on Safari */
             overscroll-behavior: none;
-            /* Extend background to edges */
             -webkit-overflow-scrolling: touch;
             color: white;
         }
 
-        /* Fix for the white hue when scrolling on iPhone */
         body::before {
             content: '';
             position: fixed;
@@ -49,7 +44,6 @@
             z-index: -1;
         }
 
-        /* Ensure all content extends to edges */
         body::after {
             content: '';
             position: fixed;
@@ -57,7 +51,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #0b1120; /* Fallback color */
+            background: #0b1120;
             z-index: -2;
         }
 
@@ -66,7 +60,6 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
-            /* Ensure container fills available space */
             min-height: 100%;
             display: flex;
             flex-direction: column;
@@ -118,7 +111,7 @@
             display: inline-block;
         }
 
-        /* ===== STATS WITH GLOWING TEXT ===== */
+        /* ===== STATS ===== */
         .stats-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -295,10 +288,6 @@
             width: 100%;
         }
 
-        .date-grid .form-group {
-            min-width: 0;
-        }
-
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
@@ -424,7 +413,6 @@
             border: none;
             color: #94a3b8;
             white-space: nowrap;
-            position: relative;
         }
 
         .view-tab.active {
@@ -470,6 +458,7 @@
             font-weight: 600;
             color: white;
             text-align: center;
+            vertical-align: middle;
             width: 100px;
             padding: 0.75rem 0.25rem;
             border-right: 2px solid rgba(255, 255, 255, 0.1) !important;
@@ -478,13 +467,8 @@
         .villa-name {
             display: block;
             font-size: 0.9rem;
-            margin-bottom: 0.2rem;
-        }
-        
-        .villa-subname {
-            display: block;
-            font-size: 0.65rem;
-            color: #94a3b8;
+            text-align: center;
+            width: 100%;
         }
 
         .bookings-container {
@@ -508,11 +492,17 @@
             text-overflow: ellipsis;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
         }
 
         .calendar-booking.villa1 { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .calendar-booking.villa2 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
         .calendar-booking.villa3 { background: linear-gradient(135deg, #ec4899, #db2777); }
+
+        .calendar-booking:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
 
         /* ===== TIMELINE ===== */
         .timeline-view {
@@ -551,14 +541,7 @@
             font-size: 0.85rem;
             flex-shrink: 0;
             padding: 0.25rem 0;
-        }
-        
-        .timeline-villa small {
-            display: block;
-            font-weight: 400;
-            color: #94a3b8;
-            font-size: 0.65rem;
-            margin-top: 0.2rem;
+            text-align: center;
         }
 
         .timeline-bars {
@@ -580,33 +563,22 @@
             gap: 0.4rem;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
         }
 
         .timeline-bar.villa2 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
         .timeline-bar.villa3 { background: linear-gradient(135deg, #ec4899, #db2777); }
+
+        .timeline-bar:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
 
         .date-badge {
             background: rgba(255, 255, 255, 0.15);
             padding: 0.15rem 0.5rem;
             border-radius: 30px;
             font-size: 0.65rem;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            font-size: 1rem;
-            margin-left: 0.1rem;
-            padding: 0.1rem 0.3rem;
-            transition: all 0.2s;
-            border-radius: 50%;
-        }
-
-        .delete-btn:hover {
-            color: white;
-            background: rgba(0, 0, 0, 0.2);
         }
 
         .empty-state {
@@ -617,6 +589,164 @@
             background: rgba(255, 255, 255, 0.02);
             border-radius: 30px;
             border: 2px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 32px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            margin-bottom: 2rem;
+        }
+
+        .modal-detail {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .modal-detail-icon.villa1 { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .modal-detail-icon.villa2 { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+        .modal-detail-icon.villa3 { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
+
+        .modal-detail-content {
+            flex: 1;
+        }
+
+        .modal-detail-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .modal-detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-align: center;
+        }
+
+        .modal-btn.delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-btn.cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         .loading {
@@ -637,7 +767,6 @@
         @media (max-width: 480px) {
             body {
                 padding: 0.5rem;
-                /* Ensure background extends to edges on iPhone */
                 background-attachment: fixed;
             }
             
@@ -671,41 +800,11 @@
                 border-radius: 24px;
             }
             
-            .booking-card h2 {
-                font-size: 1.2rem;
-            }
-            
-            .form-group input, .form-group select {
-                padding: 0.8rem 1rem;
-                font-size: 0.95rem;
-            }
-            
-            .btn-primary {
-                padding: 0.8rem 1.25rem;
-                font-size: 0.95rem;
-            }
-            
-            .view-tab {
-                padding: 0.5rem 1rem;
-                font-size: 0.85rem;
-            }
-            
-            .timeline-row {
-                padding: 0.75rem;
-            }
-            
-            .timeline-bar {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.75rem;
-            }
-            
-            .date-badge {
-                padding: 0.1rem 0.4rem;
-                font-size: 0.6rem;
+            .modal-content {
+                padding: 1.5rem;
             }
         }
 
-        /* Fix for iPhone notch and dynamic island */
         @supports (padding: max(0px)) {
             body {
                 padding-left: max(1rem, env(safe-area-inset-left));
@@ -719,7 +818,7 @@
 
 <body>
     <div class="app-container">
-        <!-- Header with stats -->
+        <!-- Header -->
         <div class="header">
             <h1>Kananke Hills <span>Villa Manager</span></h1>
             <div class="stats-card">
@@ -778,9 +877,9 @@
                 <div class="form-group">
                     <label>Select villa</label>
                     <select id="villa">
-                        <option value="Villa 1 - Jasmin">🌸 Jasmin · Ocean View</option>
-                        <option value="Villa 2 - Orchid">🌺 Orchid · Garden Suite</option>
-                        <option value="Villa 3 - Rose">🌹 Rose · Pool House</option>
+                        <option value="Villa 1 - Jasmin">🌸 Jasmin</option>
+                        <option value="Villa 2 - Orchid">🌺 Orchid</option>
+                        <option value="Villa 3 - Rose">🌹 Rose</option>
                     </select>
                 </div>
 
@@ -816,15 +915,30 @@
 
                 <!-- Calendar view -->
                 <div id="calendar-view" class="calendar-view">
-                    <table class="calendar-table" id="calendar-table">
-                        <!-- Calendar rendered by JS -->
-                    </table>
+                    <table class="calendar-table" id="calendar-table"></table>
                 </div>
 
                 <!-- Timeline view -->
                 <div id="timeline-view" class="timeline-view" style="display: none;">
                     <div class="timeline-container" id="timeline-grid"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content" id="modal-content">
+            <div class="modal-header">
+                <h3>Booking Details</h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Filled by JavaScript -->
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn delete" id="modal-delete-btn">Delete Booking</button>
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -839,6 +953,7 @@
         // State
         let allBookings = [];
         let currentView = 'calendar';
+        let selectedBookingId = null;
 
         // DOM Elements
         const nameInput = document.getElementById('name');
@@ -855,6 +970,9 @@
         const timelineView = document.getElementById('timeline-view');
         const calendarTable = document.getElementById('calendar-table');
         const timelineGrid = document.getElementById('timeline-grid');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalBody = document.getElementById('modal-body');
+        const modalDeleteBtn = document.getElementById('modal-delete-btn');
 
         // Set default dates
         const today = new Date();
@@ -875,6 +993,70 @@
             successText.textContent = message;
             successMessage.classList.add('show');
             setTimeout(() => successMessage.classList.remove('show'), 3000);
+        }
+
+        // Modal functions
+        function openModal(bookingId) {
+            selectedBookingId = bookingId;
+            const booking = allBookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            const villaNum = booking.villa.split(' - ')[0];
+            const villaName = booking.villa.split(' - ')[1];
+            let villaClass = 'villa1';
+            if (villaName === 'Orchid') villaClass = 'villa2';
+            if (villaName === 'Rose') villaClass = 'villa3';
+
+            const startDate = new Date(booking.start_date).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const endDate = new Date(booking.end_date).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            modalBody.innerHTML = `
+                <div class="modal-detail">
+                    <div class="modal-detail-icon ${villaClass}">${villaName === 'Jasmin' ? '🌸' : villaName === 'Orchid' ? '🌺' : '🌹'}</div>
+                    <div class="modal-detail-content">
+                        <div class="modal-detail-label">Villa</div>
+                        <div class="modal-detail-value">${villaName}</div>
+                    </div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-detail-icon ${villaClass}">👤</div>
+                    <div class="modal-detail-content">
+                        <div class="modal-detail-label">Guest</div>
+                        <div class="modal-detail-value">${booking.guest_name}</div>
+                    </div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-detail-icon ${villaClass}">📅</div>
+                    <div class="modal-detail-content">
+                        <div class="modal-detail-label">Check-in</div>
+                        <div class="modal-detail-value">${startDate}</div>
+                    </div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-detail-icon ${villaClass}">📅</div>
+                    <div class="modal-detail-content">
+                        <div class="modal-detail-label">Check-out</div>
+                        <div class="modal-detail-value">${endDate}</div>
+                    </div>
+                </div>
+            `;
+
+            modalOverlay.classList.add('show');
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('show');
+            selectedBookingId = null;
         }
 
         // Check for conflicts
@@ -1005,7 +1187,7 @@
 
         // Delete booking
         async function deleteBooking(id) {
-            if (!confirm('Delete this booking?')) return;
+            closeModal();
             
             try {
                 const { error } = await supabaseClient
@@ -1037,9 +1219,9 @@
             }
 
             const villas = [
-                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸', sub: 'Ocean View' },
-                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺', sub: 'Garden Suite' },
-                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹', sub: 'Pool House' }
+                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸' },
+                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺' },
+                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹' }
             ];
             
             const villaColors = ['villa1', 'villa2', 'villa3'];
@@ -1056,7 +1238,7 @@
 
             villas.forEach((villa, villaIndex) => {
                 html += '<tr>';
-                html += `<td class="villa-cell"><span class="villa-name">${villa.icon} ${villa.display}</span><span class="villa-subname">${villa.sub}</span></td>`;
+                html += `<td class="villa-cell"><span class="villa-name">${villa.icon} ${villa.display}</span></td>`;
 
                 dates.forEach(date => {
                     const dateStr = date.toISOString().split('T')[0];
@@ -1074,7 +1256,7 @@
                         dayBookings.forEach(booking => {
                             const isStart = dateStr === booking.start_date;
                             
-                            html += `<div class="calendar-booking ${villaColors[villaIndex]}" onclick="window.deleteBooking(${booking.id})" title="Click to delete">`;
+                            html += `<div class="calendar-booking ${villaColors[villaIndex]}" onclick="openModal(${booking.id})" title="Click for details">`;
                             if (isStart) html += '📌 ';
                             html += booking.guest_name.length > 8 ? booking.guest_name.substring(0, 6) + '…' : booking.guest_name;
                             html += '</div>';
@@ -1102,9 +1284,9 @@
             }
 
             const villas = [
-                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸', sub: 'Ocean View', class: 'villa1' },
-                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺', sub: 'Garden Suite', class: 'villa2' },
-                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹', sub: 'Pool House', class: 'villa3' }
+                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸', class: 'villa1' },
+                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺', class: 'villa2' },
+                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹', class: 'villa3' }
             ];
             
             let html = '<div class="timeline-header"><div style="width:100px"></div><div>Upcoming stays</div></div>';
@@ -1117,17 +1299,16 @@
                 if (villaBookings.length === 0) return;
 
                 html += '<div class="timeline-row">';
-                html += `<div class="timeline-villa">${villa.icon} ${villa.display}<small>${villa.sub}</small></div>`;
+                html += `<div class="timeline-villa">${villa.icon} ${villa.display}</div>`;
                 html += '<div class="timeline-bars">';
 
                 villaBookings.forEach(booking => {
                     const start = new Date(booking.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
                     const end = new Date(booking.end_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
                     
-                    html += `<div class="timeline-bar ${villa.class}">`;
+                    html += `<div class="timeline-bar ${villa.class}" onclick="openModal(${booking.id})" title="Click for details">`;
                     html += `<span class="date-badge">${start} → ${end}</span>`;
                     html += booking.guest_name.length > 12 ? booking.guest_name.substring(0, 10) + '…' : booking.guest_name;
-                    html += `<button class="delete-btn" onclick="window.deleteBooking(${booking.id})" title="Delete booking">✕</button>`;
                     html += '</div>';
                 });
 
@@ -1161,6 +1342,20 @@
             renderCurrentView();
         }
 
+        // Modal delete handler
+        modalDeleteBtn.addEventListener('click', () => {
+            if (selectedBookingId) {
+                deleteBooking(selectedBookingId);
+            }
+        });
+
+        // Close modal when clicking overlay
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
         // Event listeners
         addBtn.addEventListener('click', addBooking);
         
@@ -1173,6 +1368,8 @@
         });
 
         // Make functions available globally
+        window.openModal = openModal;
+        window.closeModal = closeModal;
         window.deleteBooking = deleteBooking;
         window.addBooking = addBooking;
 
