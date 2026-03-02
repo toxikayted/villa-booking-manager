@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
     <title>Kananke Hills · Villa Manager</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet">
     <style>
+        /* Reset all margins and padding to eliminate white borders */
         * {
             margin: 0;
             padding: 0;
@@ -14,14 +15,27 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
+        /* Fix for iPhone white borders and scrolling hue */
+        html {
+            background: #0b1120; /* Match body background */
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             background: linear-gradient(135deg, #0b1120 0%, #192132 100%);
             min-height: 100vh;
+            min-height: -webkit-fill-available; /* Fix for iOS viewport height */
             padding: 1rem;
             position: relative;
+            margin: 0;
+            /* Prevent white overscroll on Safari */
+            overscroll-behavior: none;
+            /* Extend background to edges */
+            -webkit-overflow-scrolling: touch;
+            color: white;
         }
 
-        /* Cool background effect */
+        /* Fix for the white hue when scrolling on iPhone */
         body::before {
             content: '';
             position: fixed;
@@ -32,6 +46,19 @@
             background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
                         radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
             pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Ensure all content extends to edges */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0b1120; /* Fallback color */
+            z-index: -2;
         }
 
         .app-container {
@@ -39,6 +66,10 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
+            /* Ensure container fills available space */
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ===== HEADER ===== */
@@ -87,7 +118,7 @@
             display: inline-block;
         }
 
-        /* ===== FIXED STATS WITH GLOWING TEXT - NO CIRCLES ===== */
+        /* ===== STATS WITH GLOWING TEXT ===== */
         .stats-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -115,13 +146,9 @@
             position: relative;
         }
 
-        /* Glowing text instead of circles */
         .stat-label {
             font-weight: 600;
             font-size: 0.9rem;
-            background: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
         }
 
         .stat-label.villa1 {
@@ -154,6 +181,7 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            flex: 1;
         }
 
         @media (min-width: 1024px) {
@@ -605,15 +633,18 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ===== MOBILE OPTIMIZATIONS ===== */
+        /* ===== IPHONE OPTIMIZATIONS ===== */
         @media (max-width: 480px) {
             body {
                 padding: 0.5rem;
+                /* Ensure background extends to edges on iPhone */
+                background-attachment: fixed;
             }
             
             .header {
                 padding: 1rem;
                 border-radius: 30px;
+                margin-bottom: 1.5rem;
             }
             
             .header h1 {
@@ -673,12 +704,22 @@
                 font-size: 0.6rem;
             }
         }
+
+        /* Fix for iPhone notch and dynamic island */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+                padding-top: max(1rem, env(safe-area-inset-top));
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="app-container">
-        <!-- Header with stats - FIXED: Glowing text instead of circles -->
+        <!-- Header with stats -->
         <div class="header">
             <h1>Kananke Hills <span>Villa Manager</span></h1>
             <div class="stats-card">
@@ -743,7 +784,6 @@
                     </select>
                 </div>
 
-                <!-- Fixed date grid -->
                 <div class="date-grid">
                     <div class="form-group">
                         <label>Check-in</label>
@@ -1141,5 +1181,3 @@
     </script>
 </body>
 </html>
-
-
