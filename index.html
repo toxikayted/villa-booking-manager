@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Villa Haven · Booking Manager</title>
+    <title>Kananke Hills · Villa Manager</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet">
     <style>
@@ -15,25 +15,48 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f0f4f8 0%, #e6ecf4 100%);
+            background: linear-gradient(135deg, #0b1120 0%, #192132 100%);
             min-height: 100vh;
             padding: 1rem;
+            position: relative;
+        }
+
+        /* Cool background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .app-container {
             max-width: 1600px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
-        /* ===== MOBILE-FIRST HEADER ===== */
+        /* ===== COOL HEADER WITH GLASS EFFECT ===== */
         .header {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 40px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
         }
 
-        @media (min-width: 640px) {
+        @media (min-width: 768px) {
             .header {
                 flex-direction: row;
                 justify-content: space-between;
@@ -42,84 +65,95 @@
         }
 
         .header h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             line-height: 1.2;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
         }
 
         @media (min-width: 768px) {
             .header h1 {
-                font-size: 2.2rem;
+                font-size: 2.4rem;
             }
         }
 
         .header h1 span {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
 
-        /* ===== MOBILE-FRIENDLY STATS ===== */
+        /* ===== COOL STATS CARDS ===== */
         .stats-card {
-            background: white;
-            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1.5rem;
             border-radius: 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            gap: 0.5rem;
-            border: 1px solid rgba(255,255,255,0.8);
-        }
-
-        @media (min-width: 640px) {
-            .stats-card {
-                padding: 0.75rem 1.5rem;
-                flex-wrap: nowrap;
-            }
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -0.75rem;
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .stat-dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
+            box-shadow: 0 0 15px currentColor;
         }
 
-        .stat-dot.villa1 { background: #3b82f6; }
-        .stat-dot.villa2 { background: #8b5cf6; }
-        .stat-dot.villa3 { background: #ec4899; }
+        .stat-dot.villa1 { 
+            background: #3b82f6; 
+            box-shadow: 0 0 15px #3b82f6;
+        }
+        .stat-dot.villa2 { 
+            background: #8b5cf6; 
+            box-shadow: 0 0 15px #8b5cf6;
+        }
+        .stat-dot.villa3 { 
+            background: #ec4899; 
+            box-shadow: 0 0 15px #ec4899;
+        }
 
         .stat-label {
             font-weight: 500;
-            color: #64748b;
-            font-size: 0.8rem;
-        }
-
-        @media (min-width: 768px) {
-            .stat-label {
-                font-size: 0.9rem;
-            }
+            color: #94a3b8;
+            font-size: 0.9rem;
         }
 
         .stat-number {
-            font-weight: 600;
-            color: #1e293b;
-            background: #f1f5f9;
-            padding: 0.15rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* ===== MOBILE-FIRST GRID ===== */
+        /* ===== MAIN GRID ===== */
         .dashboard-grid {
             display: flex;
             flex-direction: column;
@@ -129,17 +163,19 @@
         @media (min-width: 1024px) {
             .dashboard-grid {
                 display: grid;
-                grid-template-columns: 380px 1fr;
+                grid-template-columns: 400px 1fr;
             }
         }
 
-        /* ===== MOBILE-FRIENDLY FORM CARD ===== */
+        /* ===== COOL BOOKING CARD ===== */
         .booking-card {
-            background: white;
-            border-radius: 24px;
-            padding: 1.5rem;
-            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         @media (min-width: 1024px) {
@@ -151,31 +187,33 @@
         }
 
         .booking-card h2 {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
+            color: white;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .booking-card h2 svg {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             color: #3b82f6;
+            filter: drop-shadow(0 0 10px #3b82f6);
         }
 
         .subtitle {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e2e8f0;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* ===== FIXED DATE SELECTORS - NO OVERFLOW ===== */
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
@@ -183,94 +221,139 @@
             font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
-            color: #475569;
-            margin-bottom: 0.4rem;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
         }
 
         .form-group input, .form-group select {
             width: 100%;
-            padding: 0.8rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             font-size: 1rem;
-            transition: all 0.2s;
-            background: #f8fafc;
+            transition: all 0.3s;
+            color: white;
             -webkit-appearance: none;
             appearance: none;
         }
 
-        /* Better touch targets for mobile */
-        .form-group input, .form-group select, .btn-primary, .view-tab {
-            min-height: 48px;
+        .form-group select option {
+            background: #1e293b;
+            color: white;
+        }
+
+        /* Fix for date inputs - they stay in box now */
+        .form-group input[type="date"] {
+            color-scheme: dark;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.5;
+            cursor: pointer;
+        }
+
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
         }
 
         .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #3b82f6;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+            background: rgba(59, 130, 246, 0.1);
         }
 
+        /* Fixed date grid - no overflow */
         .date-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .date-grid .form-group {
+            min-width: 0; /* Prevents overflow */
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
             border: none;
-            padding: 0.9rem 1.5rem;
+            padding: 1rem 2rem;
             border-radius: 40px;
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
             width: 100%;
-            transition: all 0.2s;
-            box-shadow: 0 8px 15px -5px rgba(37,99,235,0.3);
-            margin-top: 0.5rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px -5px #2563eb80;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover:not(:disabled)::before {
+            left: 100%;
         }
 
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 12px 20px -5px rgba(37,99,235,0.4);
+            box-shadow: 0 20px 30px -5px #2563eb;
         }
 
         .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            background: #94a3b8;
+            background: #475569;
             box-shadow: none;
         }
 
         .conflict-warning {
-            background: #fef2f2;
-            border: 2px solid #fee2e2;
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            margin: 1rem 0 0;
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 1.5rem 0 0;
             display: none;
             align-items: center;
-            gap: 0.5rem;
-            color: #991b1b;
+            gap: 0.75rem;
+            color: #f87171;
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
         }
 
         .conflict-warning.show {
             display: flex;
         }
 
+        /* ===== COOL MESSAGES ===== */
         .message {
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1rem;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.5rem;
             display: none;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
         }
 
         .message.show {
@@ -278,252 +361,277 @@
         }
 
         .error-message {
-            background: #fef2f2;
-            border: 2px solid #fee2e2;
-            color: #991b1b;
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
         }
 
         .success-message {
-            background: #f0fdf4;
-            border: 2px solid #bbf7d0;
-            color: #166534;
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
         }
 
         /* ===== VIEWS CONTAINER ===== */
         .views-container {
-            background: rgba(255,255,255,0.7);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.8);
-            overflow: hidden;
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .view-tabs {
             display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #e2e8f0;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 1rem;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .view-tab {
-            padding: 0.6rem 1.2rem;
-            border-radius: 30px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 40px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             background: transparent;
             border: none;
-            color: #64748b;
-            white-space: nowrap;
+            color: #94a3b8;
+            position: relative;
+        }
+
+        .view-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: #3b82f6;
+            transition: width 0.3s;
         }
 
         .view-tab.active {
-            background: #1e293b;
             color: white;
         }
 
-        /* ===== MOBILE-FRIENDLY CALENDAR ===== */
+        .view-tab.active::after {
+            width: 50%;
+        }
+
+        /* ===== COOL CALENDAR ===== */
         .calendar-view {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            margin: 0 -0.5rem;
-            padding: 0 0.5rem;
+            border-radius: 20px;
         }
 
         .calendar-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
-            background: white;
-            border-radius: 16px;
+            min-width: 900px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
 
         .calendar-table th {
-            background: #f8fafc;
-            padding: 0.75rem 0.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 0.5rem;
             font-weight: 600;
-            color: #475569;
-            font-size: 0.8rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
             text-align: center;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .calendar-table td {
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             vertical-align: top;
             padding: 0;
         }
 
         .villa-cell {
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.03);
             font-weight: 600;
-            color: #1e293b;
+            color: white;
             text-align: center;
-            width: 100px;
-            font-size: 0.85rem;
-            border-right: 2px solid #e2e8f0 !important;
+            width: 120px;
+            padding: 1rem 0.5rem;
+            border-right: 2px solid rgba(255, 255, 255, 0.1) !important;
         }
 
         .villa-name {
             display: block;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
         }
         
         .villa-subname {
             display: block;
-            font-size: 0.7rem;
-            font-weight: 400;
-            color: #64748b;
-            margin-top: 0.2rem;
-        }
-
-        .date-header {
             font-size: 0.75rem;
-            color: #64748b;
-            font-weight: 500;
-            padding: 0.5rem;
-            text-align: center;
-            border-bottom: 1px solid #e2e8f0;
+            color: #94a3b8;
         }
 
         .bookings-container {
-            min-height: 80px;
-            padding: 0.25rem;
+            min-height: 100px;
+            padding: 0.5rem;
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
+            gap: 0.3rem;
         }
 
         .calendar-booking {
             color: white;
-            padding: 0.25rem 0.25rem;
-            border-radius: 4px;
-            font-size: 0.65rem;
+            padding: 0.35rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            line-height: 1.3;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .calendar-booking.villa1 { background: #3b82f6; }
-        .calendar-booking.villa2 { background: #8b5cf6; }
-        .calendar-booking.villa3 { background: #ec4899; }
+        .calendar-booking.villa1 { 
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        .calendar-booking.villa2 { 
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .calendar-booking.villa3 { 
+            background: linear-gradient(135deg, #ec4899, #db2777);
+        }
 
         .calendar-booking:hover {
+            transform: translateY(-1px);
             filter: brightness(1.1);
         }
 
-        /* ===== MOBILE-FRIENDLY TIMELINE ===== */
+        /* ===== COOL TIMELINE ===== */
         .timeline-view {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
 
         .timeline-container {
-            min-width: 500px;
+            min-width: 600px;
         }
 
         .timeline-header {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             font-weight: 600;
-            color: #475569;
+            color: #94a3b8;
+            padding: 0 0.5rem;
         }
 
         .timeline-row {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             align-items: flex-start;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .timeline-villa {
-            width: 100px;
+            width: 120px;
             font-weight: 600;
-            color: #1e293b;
-            font-size: 0.85rem;
+            color: white;
+            font-size: 0.95rem;
             flex-shrink: 0;
+            padding: 0.5rem 0;
         }
         
         .timeline-villa small {
             display: block;
             font-weight: 400;
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.7rem;
+            margin-top: 0.2rem;
         }
 
         .timeline-bars {
             flex: 1;
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
         }
 
         .timeline-bar {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
-            padding: 0.5rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 0.6rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            flex-wrap: wrap;
+            gap: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .timeline-bar.villa2 { background: #8b5cf6; }
-        .timeline-bar.villa3 { background: #ec4899; }
+        .timeline-bar.villa2 { 
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .timeline-bar.villa3 { 
+            background: linear-gradient(135deg, #ec4899, #db2777);
+        }
 
         .date-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            backdrop-filter: blur(5px);
         }
 
         .delete-btn {
             background: none;
             border: none;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
             margin-left: 0.25rem;
-            padding: 0.2rem 0.4rem;
+            padding: 0.2rem 0.5rem;
             transition: all 0.2s;
             border-radius: 50%;
         }
 
         .delete-btn:hover {
             color: white;
-            background: rgba(0,0,0,0.1);
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .empty-state {
             text-align: center;
-            padding: 2rem;
+            padding: 4rem 2rem;
             color: #94a3b8;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 30px;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
         }
 
+        /* ===== LOADING ANIMATION ===== */
         .loading {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #e2e8f0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
             border-top-color: #3b82f6;
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -535,20 +643,28 @@
 
         /* ===== TOUCH OPTIMIZATIONS ===== */
         @media (max-width: 768px) {
-            .calendar-booking, .timeline-bar, .delete-btn, .view-tab {
-                cursor: default;
+            body {
+                padding: 0.75rem;
             }
             
-            .calendar-booking:active, .timeline-bar:active, .btn-primary:active {
-                transform: scale(0.98);
+            .header {
+                padding: 1.25rem;
             }
             
-            .delete-btn:active {
-                background: rgba(0,0,0,0.2);
+            .stats-card {
+                padding: 0.5rem 1rem;
+            }
+            
+            .booking-card, .views-container {
+                padding: 1.5rem;
             }
             
             input, select, button {
-                font-size: 16px !important; /* Prevents zoom on iOS */
+                font-size: 16px !important;
+            }
+            
+            .date-grid {
+                gap: 0.75rem;
             }
         }
     </style>
@@ -558,7 +674,7 @@
     <div class="app-container">
         <!-- Header with stats -->
         <div class="header">
-            <h1>Villa <span>Haven</span></h1>
+            <h1>Kananke Hills <span>Villa Manager</span></h1>
             <div class="stats-card">
                 <div class="stat-item">
                     <span class="stat-dot villa1"></span>
@@ -580,7 +696,7 @@
 
         <!-- Messages -->
         <div id="error-message" class="message error-message">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -589,7 +705,7 @@
         </div>
 
         <div id="success-message" class="message success-message">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 6L9 17L4 12"></path>
             </svg>
             <span id="success-text"></span>
@@ -608,7 +724,7 @@
                     </svg>
                     New Booking
                 </h2>
-                <div class="subtitle">Add a reservation</div>
+                <div class="subtitle">Add a reservation for your luxury villas</div>
 
                 <div class="form-group">
                     <label>Guest name</label>
@@ -624,6 +740,7 @@
                     </select>
                 </div>
 
+                <!-- FIXED DATE GRID - NO OVERFLOW -->
                 <div class="date-grid">
                     <div class="form-group">
                         <label>Check-in</label>
@@ -636,22 +753,22 @@
                 </div>
 
                 <div id="conflict-warning" class="conflict-warning">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    <span>Already booked for these dates</span>
+                    <span>This villa is already booked for these dates</span>
                 </div>
 
-                <button class="btn-primary" id="add-btn">➕ Add booking</button>
+                <button class="btn-primary" id="add-btn">➕ Add Booking</button>
             </div>
 
             <!-- Views -->
             <div class="views-container">
                 <div class="view-tabs">
-                    <button class="view-tab active" data-view="calendar">📅 Calendar</button>
-                    <button class="view-tab" data-view="timeline">📊 Timeline</button>
+                    <button class="view-tab active" data-view="calendar">📅 Calendar View</button>
+                    <button class="view-tab" data-view="timeline">📊 Timeline View</button>
                 </div>
 
                 <!-- Calendar view -->
@@ -877,9 +994,9 @@
             }
 
             const villas = [
-                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸' },
-                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺' },
-                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹' }
+                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸', sub: 'Ocean View' },
+                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺', sub: 'Garden Suite' },
+                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹', sub: 'Pool House' }
             ];
             
             const villaColors = ['villa1', 'villa2', 'villa3'];
@@ -890,13 +1007,13 @@
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
                 const dayNum = date.getDate();
                 const month = date.toLocaleDateString('en-US', { month: 'short' });
-                html += `<th>${dayName}<br><span style="font-weight:400; font-size:0.7rem;">${month} ${dayNum}</span></th>`;
+                html += `<th>${dayName}<br><span style="font-weight:400; font-size:0.7rem; color:#94a3b8;">${month} ${dayNum}</span></th>`;
             });
             html += '</tr></thead><tbody>';
 
             villas.forEach((villa, villaIndex) => {
                 html += '<tr>';
-                html += `<td class="villa-cell"><span class="villa-name">${villa.icon} ${villa.display}</span></td>`;
+                html += `<td class="villa-cell"><span class="villa-name">${villa.icon} ${villa.display}</span><span class="villa-subname">${villa.sub}</span></td>`;
 
                 dates.forEach(date => {
                     const dateStr = date.toISOString().split('T')[0];
@@ -920,7 +1037,7 @@
                             html += '</div>';
                         });
                     } else {
-                        html += '<div style="height: 20px;"></div>';
+                        html += '<div style="height: 24px;"></div>';
                     }
 
                     html += '</div>';
@@ -942,12 +1059,12 @@
             }
 
             const villas = [
-                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸', class: 'villa1' },
-                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺', class: 'villa2' },
-                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹', class: 'villa3' }
+                { name: 'Villa 1 - Jasmin', display: 'Jasmin', icon: '🌸', sub: 'Ocean View', class: 'villa1' },
+                { name: 'Villa 2 - Orchid', display: 'Orchid', icon: '🌺', sub: 'Garden Suite', class: 'villa2' },
+                { name: 'Villa 3 - Rose', display: 'Rose', icon: '🌹', sub: 'Pool House', class: 'villa3' }
             ];
             
-            let html = '<div class="timeline-header"><div style="width:100px"></div><div>Upcoming stays</div></div>';
+            let html = '<div class="timeline-header"><div style="width:120px"></div><div>Upcoming Stays</div></div>';
 
             villas.forEach(villa => {
                 const villaBookings = allBookings
@@ -957,7 +1074,7 @@
                 if (villaBookings.length === 0) return;
 
                 html += '<div class="timeline-row">';
-                html += `<div class="timeline-villa">${villa.icon} ${villa.display}<small>${villa.name.split(' - ')[0]}</small></div>`;
+                html += `<div class="timeline-villa">${villa.icon} ${villa.display}<small>${villa.sub}</small></div>`;
                 html += '<div class="timeline-bars">';
 
                 villaBookings.forEach(booking => {
